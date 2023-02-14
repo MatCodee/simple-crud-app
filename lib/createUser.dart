@@ -1,20 +1,41 @@
 import 'package:crud_homework/models/Task.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 class UserCreate extends StatefulWidget {
   const UserCreate({super.key});
-
+  
   @override
   State<UserCreate> createState() => _UserCreateState();
 }
 
 class _UserCreateState extends State<UserCreate> {
+  final storage = const FlutterSecureStorage();
+  String? deviceId;
+
+
   final controllTitle = TextEditingController();
   final controllSubtitle = TextEditingController();
   final controllDate = TextEditingController();
 
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void getDeviceId() async {
+    deviceId = await storage.read(key: 'device_id');
+    if (deviceId == null) {
+      deviceId = generateDeviceId();
+      await storage.write(key: 'device_id', value: deviceId);
+    }
+  }
+  String generateDeviceId() {
+    return 'device_' + DateTime.now().millisecondsSinceEpoch.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,16 +101,21 @@ class _UserCreateState extends State<UserCreate> {
       ),
     );
   }
-    Future creatTask({ required String title, required String subtitle }) async {
+  Future creatTask({ required String title, required String subtitle }) async {
+    deviceId = await storage.read(key: 'device_id');
+    if (deviceId == null) deviceId = generateDeviceId();
+
     final docUser = FirebaseFirestore.instance.collection('tasks').doc();
     
-      final user = Task(
-        id: docUser.id,
-        title: title,
-        subtitle: subtitle
-      );
-      print(user);
-      final json = user.toJson();
-      await docUser.set(json);
-    }
+    final task = Task(
+      id: docUser.id,
+      title: title,
+      subtitle: subtitle,
+      deviceId: deviceId!,
+    );
+    final json = task.toJson();
+    await docUser.set(json);
+  
+  }
+
 }

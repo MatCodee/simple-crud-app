@@ -5,12 +5,14 @@ import 'package:crud_homework/widget/card.dart';
 import 'package:crud_homework/widget/groupText.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -40,6 +42,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  final storage = const FlutterSecureStorage();
+  String? deviceId;
+
+
+  @override
+  void initState() {
+    super.initState();
+    getDeviceId();
+  }
+
+  void getDeviceId() async {
+    deviceId = await storage.read(key: 'device_id');
+    if (deviceId == null) {
+      deviceId = generateDeviceId();
+      await storage.write(key: 'device_id', value: deviceId);
+    }
+  }
+  String generateDeviceId() {
+    return 'device_' + DateTime.now().millisecondsSinceEpoch.toString();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,8 +165,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Stream<List<Task>> readTask() {
-    var data = FirebaseFirestore.instance.collection("tasks").snapshots().map(
+  Stream<List<Task>> readTask() {    
+    var data = FirebaseFirestore.instance.collection("tasks")
+      .where("deviceId", isEqualTo: deviceId).snapshots().map(
         (snapshot) => snapshot.docs
             .map((doc) => Task.fromJson(doc.data(), doc.id))
             .toList());

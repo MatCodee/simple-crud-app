@@ -1,17 +1,33 @@
 import 'package:crud_homework/models/Task.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 class UpdateTask extends StatelessWidget {
+  final storage = const FlutterSecureStorage();
+  String? deviceId;
   final String? documentId;
-  
+
   UpdateTask({super.key,this.documentId});
 
   final controllTitle = TextEditingController();
   final controllSubtitle = TextEditingController();
   final controllDate = TextEditingController();
+  
 
+
+
+  void getDeviceId() async {
+    deviceId = await storage.read(key: 'device_id');
+    if (deviceId == null) {
+      deviceId = generateDeviceId();
+      await storage.write(key: 'device_id', value: deviceId);
+    }
+  }
+  String generateDeviceId() {
+    return 'device_' + DateTime.now().millisecondsSinceEpoch.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +95,18 @@ class UpdateTask extends StatelessWidget {
     );
   }
 
-    Future creatTask({ required String title, required String subtitle,required String id }) async {
+  Future creatTask({ required String title, required String subtitle,required String id }) async {
+    deviceId = await storage.read(key: 'device_id');
+    if (deviceId == null) deviceId = generateDeviceId();
+    
     final docUser = FirebaseFirestore.instance.collection('tasks').doc(id);    
-      final user = Task(
+      final task = Task(
         id: docUser.id,
         title: title,
-        subtitle: subtitle
+        subtitle: subtitle,
+        deviceId: deviceId!,
       );
-      final json = user.toJson();
+      final json = task.toJson();
       await docUser.update(json);
     }
 }
