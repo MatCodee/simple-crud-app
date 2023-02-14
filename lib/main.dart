@@ -62,6 +62,7 @@ class _HomePageState extends State<HomePage> {
     deviceId = await storage.read(key: 'device_id');
     if (deviceId == null) {
       deviceId = generateDeviceId();
+      await storage.write(key: 'device_id', value: deviceId);
     }
   }
 
