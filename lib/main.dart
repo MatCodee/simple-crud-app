@@ -5,7 +5,6 @@ import 'package:crud_homework/widget/card.dart';
 import 'package:crud_homework/widget/groupText.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:crud_homework/models/User.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();  
@@ -21,7 +20,13 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: const  Color.fromARGB(255, 255, 255, 255),
+          
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.purple,
+        ),
       ),
       home: const HomePage(),
     );
@@ -121,10 +126,9 @@ class _HomePageState extends State<HomePage> {
   Stream<List<Task>> readTask() {
     var data = FirebaseFirestore.instance
       .collection("tasks").snapshots()
-      .map((snapshot) => snapshot.docs.map((doc) => Task.fromJson(doc.data())).toList());
+      .map((snapshot) => snapshot.docs.map((doc) => Task.fromJson(doc.data(),doc.id)).toList());
     return data;
   }
-
 
   Widget buildUser(Task task) =>  CardElement(title: task.title, subtitle: task.subtitle,id: task.id);
 

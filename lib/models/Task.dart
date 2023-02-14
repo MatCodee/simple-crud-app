@@ -22,8 +22,9 @@ class Task {
     //'done': done
   };
 
-  static Task fromJson(Map<String,dynamic> json) => 
+  static Task fromJson(Map<String,dynamic> json, String documentID) => 
     Task(
+      id: documentID,
       title: json['title'], 
       subtitle: json['subtitle'], 
       //date: json['date'],

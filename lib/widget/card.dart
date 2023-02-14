@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crud_homework/updateTask.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -73,11 +74,13 @@ class CardElement extends StatelessWidget {
                   Text("10:00 PM - 11:45 PM",style: TextStyle(fontSize: 15,color: Colors.black54),)
                 ],
               ),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.edit),color: Colors.blue,iconSize: 30,),
+              IconButton(onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  UpdateTask(documentId: id)));
+              }, icon: const Icon(Icons.edit),color: Colors.blue,iconSize: 30,),
               IconButton(onPressed: () {
                 FirebaseFirestore.instance
                     .collection("tasks")
-                    .doc("ewf")
+                    .doc(id)
                     .delete();
               }, icon: const Icon(Icons.delete),color: Colors.blue,iconSize: 30,)
             ],
