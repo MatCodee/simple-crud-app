@@ -43,10 +43,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final storage = const FlutterSecureStorage();
   String? deviceId;
-<<<<<<< HEAD
-=======
   bool isLoading = true;
->>>>>>> 5d9c61414bba2cd53673dce71038a4b2e2e38575
 
   @override
   void initState() {
@@ -152,15 +149,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-<<<<<<< HEAD
-  Stream<List<Task>> readTask() {
-=======
   Widget getTaskElements() {
-    if(isLoading) {
-      return Center(
+    if (isLoading) {
+      return const Center(
         child: CircularProgressIndicator(),
       );
-    }else {
+    } else {
       return Container(
         child: StreamBuilder(
           stream: readTask(deviceId),
@@ -182,12 +176,10 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
-
   }
 
   Stream<List<Task>> readTask(String? deviceId) {
     print(deviceId);
->>>>>>> 5d9c61414bba2cd53673dce71038a4b2e2e38575
     var data = FirebaseFirestore.instance
         .collection("tasks")
         .where("deviceId", isEqualTo: deviceId)
