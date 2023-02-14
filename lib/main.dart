@@ -13,7 +13,6 @@ void main() async {
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
@@ -42,10 +41,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final storage = const FlutterSecureStorage();
   String? deviceId;
-
 
   @override
   void initState() {
@@ -60,10 +57,10 @@ class _HomePageState extends State<HomePage> {
       await storage.write(key: 'device_id', value: deviceId);
     }
   }
+
   String generateDeviceId() {
     return 'device_' + DateTime.now().millisecondsSinceEpoch.toString();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -165,10 +162,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Stream<List<Task>> readTask() {    
-    var data = FirebaseFirestore.instance.collection("tasks")
-      .where("deviceId", isEqualTo: deviceId).snapshots().map(
-        (snapshot) => snapshot.docs
+  Stream<List<Task>> readTask() {
+    var data = FirebaseFirestore.instance
+        .collection("tasks")
+        .where("deviceId", isEqualTo: deviceId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
             .map((doc) => Task.fromJson(doc.data(), doc.id))
             .toList());
     return data;
