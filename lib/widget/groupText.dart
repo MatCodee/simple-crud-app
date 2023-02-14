@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -13,19 +11,23 @@ class Grouptext extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          texttarget("All",14,true),
-          texttarget("Open",14,false),
-          texttarget("Closed",0,false),
-          texttarget("Archived",0,false),
+          texttarget("All", 14, true),
+          texttarget("Open", 14, false),
+          texttarget("Closed", 0, false),
+          texttarget("Archived", 0, false),
         ],
       ),
     );
   }
 
-  Widget texttarget(String title,int number,bool active) {
+  Widget texttarget(String title, int number, bool active) {
     return Row(
       children: [
-        Text(title,style:  TextStyle(color: active ? Colors.blue : Colors.black,fontSize: 18),),
+        Text(
+          title,
+          style: TextStyle(
+              color: active ? Colors.blue : Colors.black, fontSize: 14),
+        ),
         Container(
           width: 28,
           height: 28,
@@ -34,9 +36,12 @@ class Grouptext extends StatelessWidget {
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: active ? Colors.blue : Colors.black12,
-            borderRadius:  const BorderRadius.all(Radius.circular(50)),        
+            borderRadius: const BorderRadius.all(Radius.circular(50)),
           ),
-          child: Text('${(number)}',style: const TextStyle(color: Colors.white),),
+          child: Text(
+            '${(number)}',
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
         )
       ],
     );

@@ -44,9 +44,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 Row(
@@ -112,7 +113,6 @@ class _HomePageState extends State<HomePage> {
                 //const CardElement(title: "Client Review & Feedback", subtitle: "Crypto wallet Redesing"),
 
                 Container(
-                  height: MediaQuery.of(context).size.height,
                   child: StreamBuilder(
                     stream: readTask(),
                     builder: (context, snapshot) {
