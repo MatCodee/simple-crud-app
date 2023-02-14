@@ -13,7 +13,6 @@ void main() async {
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
@@ -42,28 +41,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final storage = const FlutterSecureStorage();
   String? deviceId;
-
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    getDeviceId();
+    initStateAsync();
   }
 
-  void getDeviceId() async {
+  Future<void> initStateAsync() async {
+    await getDeviceId();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> getDeviceId() async {
     deviceId = await storage.read(key: 'device_id');
     if (deviceId == null) {
       deviceId = generateDeviceId();
-      await storage.write(key: 'device_id', value: deviceId);
     }
   }
+
   String generateDeviceId() {
     return 'device_' + DateTime.now().millisecondsSinceEpoch.toString();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -136,27 +140,7 @@ class _HomePageState extends State<HomePage> {
                   height: 10,
                 ),
                 //const CardElement(title: "Client Review & Feedback", subtitle: "Crypto wallet Redesing"),
-
-                Container(
-                  child: StreamBuilder(
-                    stream: readTask(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Algun error ${snapshot.error}');
-                      } else if (snapshot.hasData) {
-                        final task = snapshot.data!;
-                        return Wrap(
-                          direction: Axis.horizontal,
-                          spacing: 15.0,
-                          runSpacing: 15.0,
-                          children: task.map(buildUser).toList(),
-                        );
-                      } else {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  ),
-                )
+                getTaskElements(),
               ],
             ),
           ),
@@ -165,10 +149,43 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Stream<List<Task>> readTask() {    
-    var data = FirebaseFirestore.instance.collection("tasks")
-      .where("deviceId", isEqualTo: deviceId).snapshots().map(
-        (snapshot) => snapshot.docs
+  Widget getTaskElements() {
+    if(isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }else {
+      return Container(
+        child: StreamBuilder(
+          stream: readTask(deviceId),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Algun error ${snapshot.error}');
+            } else if (snapshot.hasData) {
+              final task = snapshot.data!;
+              return Wrap(
+                direction: Axis.horizontal,
+                spacing: 15.0,
+                runSpacing: 15.0,
+                children: task.map(buildUser).toList(),
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      );
+    }
+
+  }
+
+  Stream<List<Task>> readTask(String? deviceId) {
+    print(deviceId);
+    var data = FirebaseFirestore.instance
+        .collection("tasks")
+        .where("deviceId", isEqualTo: deviceId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
             .map((doc) => Task.fromJson(doc.data(), doc.id))
             .toList());
     return data;
