@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();  
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -21,8 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: const  Color.fromARGB(255, 255, 255, 255),
-          
+          secondary: const Color.fromARGB(255, 255, 255, 255),
         ),
         iconTheme: const IconThemeData(
           color: Colors.purple,
@@ -47,18 +46,26 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 25),
+            margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
             child: Column(
               children: [
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Text("New Task", style: TextStyle( fontSize: 25,fontWeight: FontWeight.w500,),),
-                        Text("Wdnesday, 11 May",style: TextStyle(fontSize: 18,color: Colors.black54),),
+                        Text(
+                          "New Task",
+                          style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "Wdnesday, 11 May",
+                          style: TextStyle(fontSize: 18, color: Colors.black54),
+                        ),
                       ],
                     ),
                     Container(
@@ -69,67 +76,78 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const UserCreate()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const UserCreate()));
                         },
-                        child:  Center(
-                          child: Row(
-                            children: const [
-                              Icon(Icons.add,color: Colors.blue,),
-                              Text("New Task", style: TextStyle( fontSize: 20,color: Colors.blue,fontWeight: FontWeight.w500,),),
-                            ],
-                          )
-                        ),
+                        child: Center(
+                            child: Row(
+                          children: const [
+                            Icon(
+                              Icons.add,
+                              color: Colors.blue,
+                            ),
+                            Text(
+                              "New Task",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        )),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 30,),
+                const SizedBox(
+                  height: 30,
+                ),
                 const Grouptext(),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 //const CardElement(title: "Client Review & Feedback", subtitle: "Crypto wallet Redesing"),
 
                 Container(
                   height: MediaQuery.of(context).size.height,
                   child: StreamBuilder(
-                  stream: readTask(),
-                  builder: (context,snapshot) {
-                    if(snapshot.hasError) {
-                      return Text('Algun error ${snapshot.error}');
-                    }
-                    else if(snapshot.hasData) {
-                      final task = snapshot.data!;
-                      return Wrap(
-                        direction: Axis.horizontal,
-                        spacing: 15.0,
-                        runSpacing: 15.0,
-                        children: task.map(buildUser).toList(),
-                      );
-                    }else {
-                      return const Center(child: CircularProgressIndicator());
-                    }   
-                  },
-                ),
+                    stream: readTask(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Algun error ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        final task = snapshot.data!;
+                        return Wrap(
+                          direction: Axis.horizontal,
+                          spacing: 15.0,
+                          runSpacing: 15.0,
+                          children: task.map(buildUser).toList(),
+                        );
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
                 )
-
-                
               ],
             ),
           ),
         ),
-        
-      
-        
       ),
     );
   }
 
   Stream<List<Task>> readTask() {
-    var data = FirebaseFirestore.instance
-      .collection("tasks").snapshots()
-      .map((snapshot) => snapshot.docs.map((doc) => Task.fromJson(doc.data(),doc.id)).toList());
+    var data = FirebaseFirestore.instance.collection("tasks").snapshots().map(
+        (snapshot) => snapshot.docs
+            .map((doc) => Task.fromJson(doc.data(), doc.id))
+            .toList());
     return data;
   }
 
-  Widget buildUser(Task task) =>  CardElement(title: task.title, subtitle: task.subtitle,id: task.id);
-
+  Widget buildUser(Task task) =>
+      CardElement(title: task.title, subtitle: task.subtitle, id: task.id);
 }
