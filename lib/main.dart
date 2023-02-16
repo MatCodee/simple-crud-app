@@ -192,5 +192,5 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildUser(Task task) =>
-      CardElement(title: task.title, subtitle: task.subtitle, id: task.id);
+      CardElement(task: task);
 }

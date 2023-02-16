@@ -1,20 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crud_homework/models/Task.dart';
 import 'package:crud_homework/updateTask.dart';
+import 'package:crud_homework/widget/targetShip.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class CardElement extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String id;
+  final Task task;
   //final String date;
 
-  const CardElement(
-      {super.key,
-      required this.title,
-      required this.subtitle,
-      required this.id});
+  const CardElement({super.key,required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +34,19 @@ class CardElement extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: Text(
+                      task.date,
+                      style: const TextStyle(
+                      fontSize: 15, color: Colors.black54),
+                    )),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Container(
                       width: MediaQuery.of(context).size.width * 0.6,
                       child: Text(
-                        title,
+                        task.title,
                         overflow: TextOverflow.ellipsis,
                         softWrap: true,
                         style: const TextStyle(
@@ -51,13 +55,11 @@ class CardElement extends StatelessWidget {
                   const SizedBox(
                     height: 5,
                   ),
-                  Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      child: Text(
-                        subtitle,
-                        style: const TextStyle(
-                            fontSize: 15, color: Colors.black54),
-                      )),
+
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  TargetShip(title:task.category,colorText: Colors.blue,color:Colors.blue.shade50)
                 ],
               ),
               Container(
@@ -74,22 +76,14 @@ class CardElement extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Divider(
-            color: Colors.black45,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   const Text(
-                    "Today: ",
+                    "Hora: ",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.black54,
@@ -97,11 +91,11 @@ class CardElement extends StatelessWidget {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.32,
-                    child: const Text(
-                      "10:00 PM - 11:45 PM",
+                    child: Text(
+                      formatDateTime(task.startTime,task.endTime),
                       overflow: TextOverflow.ellipsis,
                       softWrap: true,
-                      style: TextStyle(fontSize: 15, color: Colors.black54),
+                      style: const TextStyle(fontSize: 15, color: Colors.black54),
                     ),
                   ),
                 ],
@@ -111,7 +105,7 @@ class CardElement extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UpdateTask(documentId: id)));
+                          builder: (context) => UpdateTask(documentId: task.id)));
                 },
                 icon: const Icon(Icons.edit),
                 color: Colors.blue,
@@ -121,7 +115,7 @@ class CardElement extends StatelessWidget {
                 onPressed: () {
                   FirebaseFirestore.instance
                       .collection("tasks")
-                      .doc(id)
+                      .doc(task.id)
                       .delete();
                 },
                 icon: const Icon(Icons.delete),
@@ -133,5 +127,11 @@ class CardElement extends StatelessWidget {
         ],
       ),
     );
+  }
+  String formatDateTime(String startTime,String endTime) {
+    RegExp regex = RegExp(r'^\d{2}:\d{2}');
+    String? start = regex.stringMatch(startTime);
+    String? end = regex.stringMatch(endTime);
+    return '${start} - ${end}';
   }
 }
