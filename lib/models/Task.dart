@@ -8,7 +8,7 @@ class Task {
   final String startTime;
   final String endTime;
   final String category;
-  final bool done;
+  bool done = false;
 
   Task({
     this.id = '',
@@ -38,7 +38,6 @@ class Task {
       id: documentID,
       title: json['title'], 
       deviceId: json['deviceId'],
-      
       date: json['date'],
       startTime: json['startTime'],
       endTime: json['endTime'],

@@ -4,16 +4,22 @@ import 'package:crud_homework/updateTask.dart';
 import 'package:crud_homework/widget/targetShip.dart';
 import 'package:flutter/material.dart';
 
-class CardElement extends StatelessWidget {
+class CardElement extends StatefulWidget {
   final Task task;
   //final String date;
 
   const CardElement({super.key,required this.task});
 
   @override
+  State<CardElement> createState() => _CardElementState();
+}
+
+class _CardElementState extends State<CardElement> {
+  @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(30.0),
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.only(left: 30,right: 30, top: 30,bottom: 20),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -36,7 +42,7 @@ class CardElement extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: Text(
-                      task.date,
+                      widget.task.date,
                       style: const TextStyle(
                       fontSize: 15, color: Colors.black54),
                     )),
@@ -46,7 +52,7 @@ class CardElement extends StatelessWidget {
                   Container(
                       width: MediaQuery.of(context).size.width * 0.6,
                       child: Text(
-                        task.title,
+                        widget.task.title,
                         overflow: TextOverflow.ellipsis,
                         softWrap: true,
                         style: const TextStyle(
@@ -59,26 +65,31 @@ class CardElement extends StatelessWidget {
                   const SizedBox(
                     height: 5,
                   ),
-                  TargetShip(title:task.category,colorText: Colors.blue,color:Colors.blue.shade50)
+                  TargetShip(title:widget.task.category,colorText: Colors.blue,color:Colors.blue.shade50)
                 ],
               ),
               Container(
-                width: 40,
-                height: 40,
+                width: 50,
+                height: 50,
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.all(Radius.circular(50))),
+        
                 child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.check),
-                    color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        widget.task.done = !widget.task.done;  
+                        print(widget.task.done);                      
+                      });
+                    },
+                    icon:  widget.task.done  ? const Icon(Icons.check_box_outlined) : const Icon(Icons.check_box_outline_blank),
+                    iconSize: 60,
+                    color:  Colors.blue ),
               ),
             ],
           ),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -92,7 +103,7 @@ class CardElement extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.32,
                     child: Text(
-                      formatDateTime(task.startTime,task.endTime),
+                      formatDateTime(widget.task.startTime,widget.task.endTime),
                       overflow: TextOverflow.ellipsis,
                       softWrap: true,
                       style: const TextStyle(fontSize: 15, color: Colors.black54),
@@ -105,22 +116,22 @@ class CardElement extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UpdateTask(documentId: task.id)));
+                          builder: (context) => UpdateTask(documentId: widget.task.id)));
                 },
                 icon: const Icon(Icons.edit),
                 color: Colors.blue,
-                iconSize: 30,
+                iconSize: 40,
               ),
               IconButton(
                 onPressed: () {
                   FirebaseFirestore.instance
                       .collection("tasks")
-                      .doc(task.id)
+                      .doc(widget.task.id)
                       .delete();
                 },
                 icon: const Icon(Icons.delete),
                 color: Colors.blue,
-                iconSize: 30,
+                iconSize: 40,
               )
             ],
           )
@@ -128,6 +139,7 @@ class CardElement extends StatelessWidget {
       ),
     );
   }
+
   String formatDateTime(String startTime,String endTime) {
     RegExp regex = RegExp(r'^\d{2}:\d{2}');
     String? start = regex.stringMatch(startTime);

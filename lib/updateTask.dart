@@ -1,6 +1,7 @@
 import 'package:crud_homework/models/Task.dart';
 import 'package:crud_homework/widget/TimeCustomField.dart';
 import 'package:crud_homework/widget/targetShip.dart';
+import 'package:crud_homework/widget/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -133,30 +134,10 @@ class _UpdateTaskState extends State<UpdateTask> {
           child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          TextField(
-            controller: controllTitle,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'title',
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          TextField(
-            onTap: () => callDatePicker(),
-              controller: dateController,
-              decoration: const  InputDecoration(
-                hintStyle:  TextStyle(color: Colors.black45),
-                errorStyle: TextStyle(color: Colors.redAccent),
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.event_note),
-                labelText: "fecha para la organizacion",
-              ),
-            ),
-          const SizedBox(
-            height: 24,
-          ),
+          TextInputField(textController: controllTitle, text: "title"),
+          const SizedBox(height: 30),
+          TextInputField(textController: dateController,callback: callDatePicker, text: "fecha para la organizacion",icon: Icons.event_note,),
+          const SizedBox(height: 24,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -164,29 +145,20 @@ class _UpdateTaskState extends State<UpdateTask> {
               TimeCustomField(targetName: "end time", timeController: endTimeController),
             ],
           ),
-          const SizedBox(
-            height: 24,
-          ),
+          const SizedBox(height: 24,),
           Column(
             children: [
-              TextField(
-                controller: categoryController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Agregar alguna Categoria',
-                ),
-              ),
+              TextInputField(textController: categoryController, text: "Agregar alguna Categoria"),
               IconButton(
                   onPressed: () {
-                    ships.add(categoryController.text);
+                    if (categoryController.text.isNotEmpty) {
+                      ships.add(categoryController.text);
+                    }
                     setState(() {
                       categoryController.text = "";
                     });
                   },
                   icon: const Icon(Icons.add)),
-              const SizedBox(
-                height: 24,
-              ),
               Container(
                 child: Wrap(
                   spacing: 10.0,
@@ -194,25 +166,25 @@ class _UpdateTaskState extends State<UpdateTask> {
                     TargetShip(
                       title: "Ui Desing",
                       colorText: const Color.fromARGB(255, 125, 85, 234),
-                      color: Color.fromARGB(255, 241, 236, 255),
+                      color: const Color.fromARGB(255, 241, 236, 255),
                       onPressed: () => _onTargetShipPressed('Ui Desing'),
                     ),
                     TargetShip(
                       title: "Web Design",
                       colorText: const Color.fromARGB(255, 125, 15, 169),
-                      color: Color.fromARGB(255, 240, 235, 255),
+                      color: const Color.fromARGB(255, 240, 235, 255),
                       onPressed: () => _onTargetShipPressed('Web Design'),
                     ),
                     TargetShip(
                       title: "UI UX",
                       colorText: Colors.green,
-                      color: Color.fromARGB(255, 237, 255, 242),
+                      color: const Color.fromARGB(255, 237, 255, 242),
                       onPressed: () => _onTargetShipPressed('UI UX'),
                     ),
                     TargetShip(
                       title: "Website",
                       colorText: const Color.fromARGB(255, 63, 60, 244),
-                      color: Color.fromARGB(255, 202, 215, 255),
+                      color: const Color.fromARGB(255, 202, 215, 255),
                       onPressed: () => _onTargetShipPressed('Website'),
                     ),
                     ...ships
@@ -226,55 +198,55 @@ class _UpdateTaskState extends State<UpdateTask> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 24,
-          ),
-          TextField(
-            controller: categorySelectController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Category',
-              prefixIcon: Icon(Icons.add),
-            ),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          Container(
-            padding: const EdgeInsets.all(15),
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 234, 245, 255),
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-            ),
-            child: InkWell(
-              onTap: () {
-                final title = controllTitle.text;
-                final subtitle = controllSubtitle.text;
-                creatTask(title: title, id: widget.documentId!);
-                Navigator.pop(context);
-              },
-              child: Center(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(
-                    Icons.add,
-                    color: Colors.blue,
-                  ),
-                  Text(
-                    "Create Task",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.blue,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              )),
-            ),
-          ),
+          const SizedBox(height: 24,),
+          TextInputField(textController: categorySelectController, text: "Category",icon: Icons.add,),
+ 
+
         ],
       )),
+      bottomNavigationBar:           
+        Container(
+          height: 130,
+          padding: const EdgeInsets.only(
+            left: 30,
+            right: 30,
+            top: 10,
+            bottom: 50,
+          ),
+          child: Container(
+              padding: const EdgeInsets.all(15),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 234, 245, 255),
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+              ),
+              child: InkWell(
+                onTap: () {
+                  final title = controllTitle.text;
+                  final subtitle = controllSubtitle.text;
+                  creatTask(title: title, id: widget.documentId!);
+                  Navigator.pop(context);
+                },
+                child: Center(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.add,
+                      color: Colors.blue,
+                    ),
+                    Text(
+                      "Create Task",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                )),
+              ),
+            ),
+        ),
     );
   }
 

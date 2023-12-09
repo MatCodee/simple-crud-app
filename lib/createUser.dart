@@ -293,7 +293,7 @@ class _UserCreateState extends State<UserCreate> {
       startTime: startTimeController.text,
       endTime: endTimeController.text,
       category: categorySelectController.text,
-      done: true,
+      done: false,
     );
     
     final json = task.toJson();
