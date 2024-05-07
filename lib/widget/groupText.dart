@@ -22,7 +22,7 @@ class Grouptext extends StatelessWidget {
             width: 28,
             height: 28,
             alignment: Alignment.center,
-            margin: const EdgeInsets.only(left: 10),
+            margin: const EdgeInsets.only(left: 5),
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: activate ? Colors.blue : Colors.black12,
